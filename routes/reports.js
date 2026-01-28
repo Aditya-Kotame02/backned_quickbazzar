@@ -4,15 +4,15 @@ const result = require('../utils/result')
 
 const router = express.Router()
 
-// DELIVERY REPORTS
-
 // Pending Deliveries
 router.get('/deliveries/pending', (req, res) => {
   if (req.user.role !== 'ADMIN')
     return res.send(result.createResult('Access denied'))
 
   pool.query('CALL GetPendingDeliveries()', (err, data) => {
-    res.send(result.createResult(err, data[0]))
+    if (err) return res.send(result.createResult(err))
+    if (!data || !data[0]) return res.send(result.createResult(null, []))
+    res.send(result.createResult(null, data[0]))
   })
 })
 
@@ -22,7 +22,9 @@ router.get('/deliveries/shipped', (req, res) => {
     return res.send(result.createResult('Access denied'))
 
   pool.query('CALL GetShippedDeliveries()', (err, data) => {
-    res.send(result.createResult(err, data[0]))
+    if (err) return res.send(result.createResult(err))
+    if (!data || !data[0]) return res.send(result.createResult(null, []))
+    res.send(result.createResult(null, data[0]))
   })
 })
 
@@ -32,7 +34,9 @@ router.get('/deliveries/cancelled', (req, res) => {
     return res.send(result.createResult('Access denied'))
 
   pool.query('CALL GetCancelledDeliveries()', (err, data) => {
-    res.send(result.createResult(err, data[0]))
+    if (err) return res.send(result.createResult(err))
+    if (!data || !data[0]) return res.send(result.createResult(null, []))
+    res.send(result.createResult(null, data[0]))
   })
 })
 
@@ -42,11 +46,12 @@ router.get('/deliveries/delivered', (req, res) => {
     return res.send(result.createResult('Access denied'))
 
   pool.query('CALL GetDeliverdDeliveries()', (err, data) => {
-    res.send(result.createResult(err, data[0]))
+    if (err) return res.send(result.createResult(err))
+    if (!data || !data[0]) return res.send(result.createResult(null, []))
+    res.send(result.createResult(null, data[0]))
   })
 })
 
-// GST REPORTS 
 
 // GST Summary (Yearly)
 router.get('/gst-summary', (req, res) => {
@@ -56,7 +61,9 @@ router.get('/gst-summary', (req, res) => {
   const year = req.query.year || new Date().getFullYear()
 
   pool.query('CALL GetGSTSummary(?)', [year], (err, data) => {
-    res.send(result.createResult(err, data[0]))
+    if (err) return res.send(result.createResult(err))
+    if (!data || !data[0]) return res.send(result.createResult(null, []))
+    res.send(result.createResult(null, data[0]))
   })
 })
 
@@ -68,11 +75,12 @@ router.get('/gst-matrix', (req, res) => {
   const year = req.query.year || new Date().getFullYear()
 
   pool.query('CALL GetMonthlyGSTMatrix(?)', [year], (err, data) => {
-    res.send(result.createResult(err, data[0]))
+    if (err) return res.send(result.createResult(err))
+    if (!data || !data[0]) return res.send(result.createResult(null, []))
+    res.send(result.createResult(null, data[0]))
   })
 })
 
-// PAYMENT REPORTS
 
 // Paid Payments
 router.get('/payments/paid', (req, res) => {
@@ -80,7 +88,9 @@ router.get('/payments/paid', (req, res) => {
     return res.send(result.createResult('Access denied'))
 
   pool.query('CALL GetPaidPaymentsReport()', (err, data) => {
-    res.send(result.createResult(err, data[0]))
+    if (err) return res.send(result.createResult(err))
+    if (!data || !data[0]) return res.send(result.createResult(null, []))
+    res.send(result.createResult(null, data[0]))
   })
 })
 
@@ -90,7 +100,9 @@ router.get('/payments/failed', (req, res) => {
     return res.send(result.createResult('Access denied'))
 
   pool.query('CALL GetFailedPaymentsReport()', (err, data) => {
-    res.send(result.createResult(err, data[0]))
+    if (err) return res.send(result.createResult(err))
+    if (!data || !data[0]) return res.send(result.createResult(null, []))
+    res.send(result.createResult(null, data[0]))
   })
 })
 
@@ -100,30 +112,29 @@ router.get('/payments/pending', (req, res) => {
     return res.send(result.createResult('Access denied'))
 
   pool.query('CALL GetPendingPaymentsReport()', (err, data) => {
-    res.send(result.createResult(err, data[0]))
+    if (err) return res.send(result.createResult(err))
+    if (!data || !data[0]) return res.send(result.createResult(null, []))
+    res.send(result.createResult(null, data[0]))
   })
 })
 
-// VIEW-BASED REPORTS
 
-// Retailer Orders Report (VIEW)
+// Retailer Orders Report
 router.get('/retailers', (req, res) => {
   if (req.user.role !== 'ADMIN')
     return res.send(result.createResult('Access denied'))
 
-  const sql = `SELECT * FROM retailerordersreport`
-  pool.query(sql, (err, data) => {
+  pool.query('SELECT * FROM retailerordersreport', (err, data) => {
     res.send(result.createResult(err, data))
   })
 })
 
-// Wholesaler Product Report (VIEW)
+// Wholesaler Product Report
 router.get('/wholesalers', (req, res) => {
   if (req.user.role !== 'ADMIN')
     return res.send(result.createResult('Access denied'))
 
-  const sql = `SELECT * FROM wholesalerproductreport`
-  pool.query(sql, (err, data) => {
+  pool.query('SELECT * FROM wholesalerproductreport', (err, data) => {
     res.send(result.createResult(err, data))
   })
 })
