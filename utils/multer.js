@@ -1,13 +1,17 @@
 const multer = require('multer')
-const { CloudinaryStorage } = require('multer-storage-cloudinary')
-const cloudinary = require('./cloudinary')
 
-const storage = new CloudinaryStorage({
-  cloudinary,
-  params: {
-    folder: 'quickbazzar/products',
-    allowed_formats: ['jpg', 'png', 'jpeg']
+const storage = multer.memoryStorage()
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  fileFilter: (req, file, cb) => {
+    const allowed = ['image/jpeg', 'image/png', 'image/jpg']
+    if (!allowed.includes(file.mimetype)) {
+      return cb(new Error('Only JPG, JPEG, PNG allowed'), false)
+    }
+    cb(null, true)
   }
 })
 
-module.exports = multer({ storage })
+module.exports = upload
