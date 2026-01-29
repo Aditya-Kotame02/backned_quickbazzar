@@ -229,7 +229,7 @@ router.get('/wholesaler/:id', authorizeUser, async (req, res) => {
 
   const [data] = await pool.promise().query(
     `
-    SELECT ProductID, ProductName, Category, Price, StockQuantity, ProductImage
+    SELECT ProductID, ProductName, Category, Price, StockQuantity, ProductImage, Description
     FROM product
     WHERE WholesalerID = ? AND IsActive = 1
     `,
